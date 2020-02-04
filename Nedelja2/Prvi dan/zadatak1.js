@@ -1,0 +1,14 @@
+let a = 4;
+let b = 2;
+let c = a + b;
+let d = a - b;
+let e = a * b;
+let f = a % b;
+let g = Math.pow(a,b);
+let h = a / b;
+console.log('Zbir je ' + c);
+console.log('Razlika je ' + d);
+console.log('Proizvod je ' + e);
+console.log('Kolicnik je ' + h);
+console.log('Ostatak pri deljenju je ' + f);
+console.log('a^b je ' + g);
