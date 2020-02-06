@@ -1,6 +1,6 @@
-let n = 5 ;
-for (let i = n; i >= 1; i --){
-    let x = ' '.repeat(i-1);
-    x += '#'.repeat(6-i);
+
+for (let n = 5; n >= 1; n --){
+    let x = ' '.repeat(n-1);
+    x += '#'.repeat(6-n);
     console.log(x);
     }
