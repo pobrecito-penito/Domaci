@@ -1,5 +1,6 @@
 let x = '';
-for(let n = 0; n < 5; n++){
+let n = 5;
+for(let i = 0; i < n; i++){
      x += '#';
      console.log(x);
 }

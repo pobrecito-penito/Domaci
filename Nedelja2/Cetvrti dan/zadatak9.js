@@ -1,8 +1,8 @@
-
-for (let i = 4; i >= 0; i --){
-    let x = ' '.repeat(i);
-    x += '#'.repeat(5-i);
-    x += ' ' + '#'.repeat(5-i);
+let n = 5;
+for (let i = n; i >= 1; i --){
+    let x = ' '.repeat(i-1);
+    x += '#'.repeat(6-i);
+    x += ' ' + '#'.repeat(6-i);
     console.log(x);
    }
     
