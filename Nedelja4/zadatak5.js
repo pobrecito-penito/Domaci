@@ -31,20 +31,23 @@ let pokemon4 = {
 }
 let pokemoni = [pokemon1,pokemon2,pokemon3,pokemon4];
 
-let wrapper = document.querySelector('.wrapper');
+
+let ispis = document.querySelector('#ispis');
 
 let dugmePrikaz = document.querySelector('#prikaz');
 
-function prikaz () { pokemoni.forEach( (el) => {
+function prikaz () { 
+    ispis.innerHTML = '';
+    pokemoni.forEach( (el) => {
     let p = document.createElement('p');
     p.textContent = `Ime: ${el.ime}; Vrsta: ${el.vrsta}; 
     Sposobnosti: ${el.sposobnosti}; Karakteristike: 
     napad: ${el.karakteristike.napad} odbrana: ${el.karakteristike.odbrana}
     brzina: ${el.karakteristike.brzina}`;
-    wrapper.appendChild(p);
+    ispis.appendChild(p);
     let img = document.createElement('img');
     img.src = el.slika;
-    wrapper.appendChild(img);
+    ispis.appendChild(img);
 }) }
 dugmePrikaz.addEventListener('click', prikaz);
 
@@ -63,15 +66,16 @@ let jacina = (niz) => {
 }
 
 let prikaziPobednika = () => {
+    ispis.innerHTML = '';
     let najjaciPokemon = jacina(pokemoni);
     let p = document.createElement('p');
     p.textContent = `Ime: ${najjaciPokemon.ime}; Vrsta: ${najjaciPokemon.vrsta}; 
        Sposobnosti: ${najjaciPokemon.sposobnosti}; Karakteristike: 
        napad: ${najjaciPokemon.karakteristike.napad} odbrana: ${najjaciPokemon.karakteristike.odbrana}
        brzina: ${najjaciPokemon.karakteristike.brzina}`;
-    wrapper.appendChild(p);
+    ispis.appendChild(p);
     let img = document.createElement('img');
     img.src = najjaciPokemon.slika;
-    wrapper.appendChild(img);
+    ispis.appendChild(img);
 }
 dugmePobednik.addEventListener('click',prikaziPobednika);
