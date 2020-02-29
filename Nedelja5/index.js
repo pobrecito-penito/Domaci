@@ -1,121 +1,159 @@
-
-let inputOpis = document.querySelector('#opis');
-let inputIznos = document.querySelector('#iznos');
-let potvrda = document.querySelector('#potvrda');
-let listaPrihoda = document.querySelector('#lista-prihoda');
-let listaRashoda = document.querySelector('#lista-rashoda');
-let pUkupniPrihod = document.querySelector('#ukupni-prihod');
-let pUkupniRashod = document.querySelector('#ukupni-rashod');
-let pTrenutnoStanje = document.querySelector('#trenutno-stanje');
 let unosi = [];
 let counter = 0;
+let ukupniPrihod = 0;
+let ukupniRashod = 0;
+let trenutnoStanje = 0;
 
+const dodajUnos = (vrsta,opis,iznos) => {
+    let unos = { 
+        id: counter,
+        vrsta: vrsta,
+        opis: opis,
+        iznos: iznos
+    }
+    unosi.push(unos);
+    counter++;
+
+    switch(vrsta){
+        case 'prihod':
+            ukupniPrihod += iznos;
+            break;
+        case 'rashod':
+            ukupniRashod += iznos;
+            break;
+    }
+    trenutnoStanje = ukupniPrihod - ukupniRashod;
+}
+
+const ukloniUnos = (unos) => {
+    let index = unosi.findIndex( (el) => {
+        return el.id == unos.id;
+    })
+    unosi.splice(index,1);
+
+    switch(unos.vrsta){
+        case 'prihod':
+            ukupniPrihod -= unos.iznos;
+            trenutnoStanje = ukupniPrihod - ukupniRashod;
+            break;
+        case 'rashod':
+            ukupniRashod -= unos.iznos;
+            trenutnoStanje = ukupniPrihod - ukupniRashod;
+            break;
+    }
+}
+
+//-------------------------------------------------------//
+
+const listaPrihoda = document.querySelector('#lista-prihoda');
+const listaRashoda = document.querySelector('#lista-rashoda');
+const pUkupniPrihod = document.querySelector('#ukupni-prihod');
+const pUkupniRashod = document.querySelector('#ukupni-rashod');
+const pTrenutnoStanje = document.querySelector('#trenutno-stanje');
+
+const dodajNaListu = (unos) => {
+    const unosContainer = document.createElement('div');
+    
+    const noviUnos = document.createElement('li');
+    switch(unos.vrsta){
+        case 'prihod':
+            noviUnos.innerHTML = unos.iznos;
+            break;
+        case 'rashod':
+            if(ukupniPrihod != 0){
+                noviUnos.innerHTML = unos.iznos + ' (' + Math.round(unos.iznos/ukupniPrihod*100) + '%)'
+            }else{
+                noviUnos.innerHTML = unos.iznos
+            }
+            break;
+    }
+
+    const dugmeObrisi = document.createElement('button');
+    dugmeObrisi.innerHTML = 'X';
+    dugmeObrisi.className = 'obrisi';
+    dugmeObrisi.addEventListener('click', () => {
+        unosContainer.remove();
+        ukloniUnos(unos);
+        pUkupniPrihod.innerHTML = ukupniPrihod;
+        if(ukupniPrihod != 0){
+            pUkupniRashod.innerHTML = ukupniRashod + ' (' + Math.round(ukupniRashod/ukupniPrihod*100) + '%)';
+        } else {
+            pUkupniRashod.innerHTML = ukupniRashod; 
+        }
+        pTrenutnoStanje.innerHTML = trenutnoStanje;
+    })
+
+    noviUnos.addEventListener('mouseover', () => {
+        noviUnos.appendChild(dugmeObrisi);
+        dugmeObrisi.style.opacity = 1;
+    })
+    noviUnos.addEventListener('mouseout',() => {
+        dugmeObrisi.style.opacity = 0;
+    })
+
+    unosContainer.appendChild(noviUnos);
+
+    switch(unos.vrsta){
+        case 'prihod':
+            listaPrihoda.appendChild(unosContainer);
+            break;
+        case 'rashod':
+            listaRashoda.appendChild(unosContainer);
+            break;
+    }
+
+    pUkupniPrihod.innerHTML = ukupniPrihod;
+    if(ukupniPrihod != 0){
+        pUkupniRashod.innerHTML = ukupniRashod + ' (' + Math.round(ukupniRashod/ukupniPrihod*100) + '%)';
+    } else {
+        pUkupniRashod.innerHTML = ukupniRashod; 
+    }
+    pTrenutnoStanje.innerHTML = trenutnoStanje;
+}
+
+const dodajUnose = () => {
+    listaPrihoda.innerHTML = '';
+    listaRashoda.innerHTML = '';
+    unosi.forEach( (element) => {
+        dodajNaListu(element);
+    })
+}
+
+//----------------------------------------------------------//
+
+let dugmeDodaj = document.querySelector('#potvrda');
+let izaberiVrstu = document.querySelector('#budzet');
+let inputOpis = document.querySelector('#opis');
+let inputIznos = document.querySelector('#iznos');
+
+let vrsta = 'prihod';
+izaberiVrstu.addEventListener('change', () => {
+    vrsta = izaberiVrstu.value;
+})
 let opis = '';
 inputOpis.addEventListener('input',(e) => {
     opis = e.target.value;
 })
-
 let iznos;
 inputIznos.addEventListener('input', (e) => {
     iznos = parseInt(e.target.value);
 })
-let ukupnaZarada = 0;
-let ukupniTroskovi = 0;
 
-let dodajNaListu = () => {
+dugmeDodaj.addEventListener('click',() => {
     if(opis.trim() == '' || iznos <= 0){
-       alert('Pogresan unos!');
-       inputIznos.value = '';
-        inputOpis.value = '';
-        iznos = 0;
-        opis = '';
-        return
+        alert('Pogresan unos!');
+        inputIznos.value = '';
+         inputOpis.value = '';
+         iznos = 0;
+         opis = '';
+         return
     }
 
-    
-    let item = document.createElement('li');
+    dodajUnos(vrsta,opis,iznos);
+    dodajUnose();
 
-    let budzet = document.querySelector('#budzet').value;
-    let unos;
-    switch(budzet) {
-        case 'prihod': 
-            item.innerText = ` ${opis}  ${iznos} `;
-            listaPrihoda.appendChild(item);
-            ukupnaZarada += iznos;
-            unos = {
-                id: counter,
-                vrsta: 'prihod',
-                opis: opis,
-                iznos: iznos,
-            }
-            unosi.push(unos);
-            pUkupniPrihod.innerHTML = ukupnaZarada;
-            pUkupniRashod.innerHTML = ukupniTroskovi + ' (' + Math.floor(ukupniTroskovi/ukupnaZarada*100) + '%)';
-            
-            counter++;
-            break;
-        case 'rashod': 
-        ukupniTroskovi += iznos;
-            if(ukupnaZarada != 0){
-                item.innerText = opis + ' ' + iznos + ' (' +  Math.floor(iznos/ukupnaZarada*100) + '%)';
-                pUkupniRashod.innerHTML = ukupniTroskovi + ' (' + Math.floor(ukupniTroskovi/ukupnaZarada*100) + '%)';
-            } else {
-                item.innerText = opis + ' ' + iznos ;
-                pUkupniRashod.innerHTML = ukupniTroskovi ;
-            }
-  
-            listaRashoda.appendChild(item);
-            unos = {
-                id: counter,
-                vrsta: 'rashod',
-                opis: opis,
-                iznos: iznos,
-            }
-            unosi.push(unos);
-            
-            counter++;
-             break;
-    }
-    console.log(unosi);
-    
-    let dugmeObrisi = document.createElement('button');
-    dugmeObrisi.className = 'obrisi';
-    dugmeObrisi.innerText = 'Obrisi';
-    dugmeObrisi.addEventListener('click',() => {
-        item.remove();
-        let index = unosi.findIndex ( (el) => {
-            return el.id == unos.id;
-        })
-        unosi.splice(index,1);
-        console.log(unosi);
-        
-        if(unos.vrsta == 'prihod'){
-            ukupnaZarada -= unos.iznos;
-        }else if(unos.vrsta == 'rashod'){
-            ukupniTroskovi -= unos.iznos;
-        }
-        
-        pUkupniPrihod.innerHTML = ukupnaZarada;
-        if(ukupnaZarada != 0){
-                pUkupniRashod.innerHTML = ukupniTroskovi + ' (' + Math.floor(ukupniTroskovi/ukupnaZarada*100) + '%)';
-             } else {
-                 pUkupniRashod.innerHTML = ukupniTroskovi ;
-             }
-        pTrenutnoStanje.innerHTML = ukupnaZarada - ukupniTroskovi;
-    })
-    
-    item.addEventListener('mouseover', () => {
-        item.appendChild(dugmeObrisi);
-        dugmeObrisi.style.opacity = 1;
-    })
-    item.addEventListener('mouseout',() => {
-        dugmeObrisi.style.opacity = 0;
-    })
-    
-    pTrenutnoStanje.innerHTML = ukupnaZarada - ukupniTroskovi;
     inputIznos.value = '';
     inputOpis.value = '';
     iznos = 0;
     opis = '';
-}
-potvrda.addEventListener('click',dodajNaListu);
+})
