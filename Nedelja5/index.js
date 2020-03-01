@@ -69,11 +69,7 @@ const dodajNaListu = (unos) => {
             pUkupniRashod.innerHTML = ukupniRashod; 
         }
         pTrenutnoStanje.innerHTML = trenutnoStanje;
-        listaPrihoda.innerHTML = '';
-        listaRashoda.innerHTML = '';
-        unosi.forEach( (element) => {
-        dodajNaListu(element);
-        })
+        dodajUnose();
     })
 
     noviUnos.addEventListener('mouseover', () => {
