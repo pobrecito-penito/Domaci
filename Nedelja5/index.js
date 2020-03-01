@@ -55,18 +55,6 @@ const dodajNaListu = (unos) => {
     const unosContainer = document.createElement('div');
     
     const noviUnos = document.createElement('li');
-    switch(unos.vrsta){
-        case 'prihod':
-            noviUnos.innerHTML = unos.iznos;
-            break;
-        case 'rashod':
-            if(ukupniPrihod != 0){
-                noviUnos.innerHTML = unos.iznos + ' (' + Math.round(unos.iznos/ukupniPrihod*100) + '%)'
-            }else{
-                noviUnos.innerHTML = unos.iznos
-            }
-            break;
-    }
 
     const dugmeObrisi = document.createElement('button');
     dugmeObrisi.innerHTML = 'X';
@@ -74,7 +62,6 @@ const dodajNaListu = (unos) => {
     dugmeObrisi.addEventListener('click', () => {
         unosContainer.remove();
         ukloniUnos(unos);
-        console.log(unosi);
         pUkupniPrihod.innerHTML = ukupniPrihod;
         if(ukupniPrihod != 0){
             pUkupniRashod.innerHTML = ukupniRashod + ' (' + Math.round(ukupniRashod/ukupniPrihod*100) + '%)';
@@ -82,6 +69,11 @@ const dodajNaListu = (unos) => {
             pUkupniRashod.innerHTML = ukupniRashod; 
         }
         pTrenutnoStanje.innerHTML = trenutnoStanje;
+        listaPrihoda.innerHTML = '';
+        listaRashoda.innerHTML = '';
+        unosi.forEach( (element) => {
+        dodajNaListu(element);
+        })
     })
 
     noviUnos.addEventListener('mouseover', () => {
@@ -96,9 +88,15 @@ const dodajNaListu = (unos) => {
 
     switch(unos.vrsta){
         case 'prihod':
+            noviUnos.innerHTML = unos.opis + ' ' + unos.iznos;
             listaPrihoda.appendChild(unosContainer);
             break;
         case 'rashod':
+            if(ukupniPrihod != 0){
+                noviUnos.innerHTML = unos.opis + ' ' + unos.iznos + ' (' + Math.round(unos.iznos/ukupniPrihod*100) + '%)'
+            }else{
+                noviUnos.innerHTML = unos.opis + ' ' + unos.iznos;
+            }
             listaRashoda.appendChild(unosContainer);
             break;
     }
@@ -152,8 +150,7 @@ dugmeDodaj.addEventListener('click',() => {
 
     dodajUnos(vrsta,opis,iznos);
     dodajUnose();
-    console.log(unosi);
-    
+
     inputIznos.value = '';
     inputOpis.value = '';
     iznos = 0;
